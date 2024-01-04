@@ -23,8 +23,8 @@ class EditProfileScreen extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             controller.ProfileImgPath.isEmpty
-                ? Image.asset(
-                    imgProfile2,
+                ? Image.network(
+                    data['imageUrl'],
                     width: 100,
                     fit: BoxFit.cover,
                   ).box.roundedFull.clip(Clip.antiAlias).make()
@@ -33,26 +33,30 @@ class EditProfileScreen extends StatelessWidget {
                     width: 100,
                     fit: BoxFit.cover,
                   ).box.roundedFull.clip(Clip.antiAlias).make(),
-            10.heightBox,
             ButtonComm(
                 color: yelloColor,
                 onPress: () {
+                  controller.isLoading(false);
                   controller.changeImage(context);
                 },
                 textColor: whiteColor,
                 title: "Change"),
-            20.heightBox,
             CustomTextField(
                 Controller: controller.nameController,
                 hint: nameHint,
                 title: name,
                 isPass: false),
             CustomTextField(
-                Controller: controller.passController,
+                Controller: controller.oldpassController,
                 hint: passwordHint,
-                title: Password,
+                title: oldPassword,
                 isPass: true),
-            20.heightBox,
+            CustomTextField(
+                Controller: controller.newpassController,
+                hint: passwordHint,
+                title: newPassword,
+                isPass: true),
+            10.heightBox,
             controller.isLoading.value
                 ? CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation(yelloColor),
@@ -63,13 +67,30 @@ class EditProfileScreen extends StatelessWidget {
                         color: yelloColor,
                         onPress: () async {
                           controller.isLoading(true);
-                          await controller.uploadProfileImg(context);
-                          await controller.uploadProfile(
-                              imgUrl: controller.ProfileImgLink,
-                              name: controller.nameController.text,
-                              password: controller.passController.text);
-                          VxToast.show(context, msg: "Updated");
-                          Get.to(() => ProfileScreen());
+                          // If Profile is not change
+                          if (controller.ProfileImgPath.value.isNotEmpty) {
+                            await controller.uploadProfileImg(context);
+                          } else {
+                            controller.ProfileImgLink = data['imageUrl'];
+                          }
+                          // If Old Pass Match with database
+                          if (controller.oldpassController.text ==
+                              data['password']) {
+                            await controller.changeAuthPass(
+                                email: data['email'],
+                                password: controller.oldpassController.text,
+                                newpassword: controller.newpassController.text);
+
+                            await controller.uploadProfile(
+                                imgUrl: controller.ProfileImgLink,
+                                name: controller.nameController.text,
+                                password: controller.newpassController.text);
+                            VxToast.show(context, msg: "Updated");
+                            Get.to(() => ProfileScreen());
+                          } else {
+                            controller.isLoading(false);
+                            VxToast.show(context, msg: "Incorrect Password");
+                          }
                         },
                         textColor: whiteColor,
                         title: "Save"),
@@ -80,7 +101,7 @@ class EditProfileScreen extends StatelessWidget {
             .white
             .shadowSm
             .padding(EdgeInsets.all(16))
-            .margin(EdgeInsets.only(top: 50, left: 12, right: 12))
+            .margin(EdgeInsets.only(top: 30, left: 12, right: 12))
             .rounded
             .make(),
       ),
