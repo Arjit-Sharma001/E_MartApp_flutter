@@ -51,14 +51,14 @@ class ProfileScreen extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
                         child: Row(
                           children: [
-                            data['imgUrl'] == ''
+                            data['imageUrl'] == ''
                                 ? Image.asset(
                                     imgProfile2,
                                     width: 100,
                                     fit: BoxFit.cover,
                                   ).box.roundedFull.clip(Clip.antiAlias).make()
                                 : Image.network(
-                                    data['imgUrl'],
+                                    data['imageUrl'],
                                     width: 100,
                                     fit: BoxFit.cover,
                                   ).box.roundedFull.clip(Clip.antiAlias).make(),

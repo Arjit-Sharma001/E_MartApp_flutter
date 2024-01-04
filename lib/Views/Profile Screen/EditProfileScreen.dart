@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:emart_app/Controller/ProfileController.dart';
+import 'package:emart_app/Views/Profile%20Screen/ProfileScreen.dart';
 import 'package:emart_app/consts/consts.dart';
 import 'package:emart_app/widgetsCommon/ButtonComm.dart';
 import 'package:emart_app/widgetsCommon/CustomTextField.dart';
@@ -13,8 +14,7 @@ class EditProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var controller = Get.find<ProfileController>();
-    // controller.nameController.text = data['name'];
-    // controller.passController.text = data['password'];
+
     return BgWidget(
         child: Scaffold(
       appBar: AppBar(),
@@ -69,6 +69,7 @@ class EditProfileScreen extends StatelessWidget {
                               name: controller.nameController.text,
                               password: controller.passController.text);
                           VxToast.show(context, msg: "Updated");
+                          Get.to(() => ProfileScreen());
                         },
                         textColor: whiteColor,
                         title: "Save"),
